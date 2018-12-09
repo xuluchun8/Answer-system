@@ -1,9 +1,12 @@
 <template>
   <div class="hello">
-    <div v-for="(item,index) in itemDetail" :key="index" v-if="index+1 == currentIndex">
+    <div class="selectPaperAgin" v-if="selectedPaPerKey" >
+      <button @click="restartPaper" class="restartPaper">重新选择题库</button>
+    </div>
+    <div v-for="(item,index) in selectedPaPer" :key="index" v-if="index+1 == currentIndex">
       <div class="tag">
         <img src="../images/WechatIMG2.png" class="tagImg">
-        <span class="requestionNum">{{item.topic_name}}</span>
+        <span class="selectedPaPerKey">{{selectedPaPerKey}}</span>
       </div>
       <div class="main">
         <div class="requestionDsc">
@@ -29,6 +32,9 @@ import { mapState } from "Vuex";
 export default {
   name: "startAnswer",
   methods: {
+    restartPaper(){
+      this.$store.commit('restartPaper')
+    },
     selectAnswer(option) {
       this.currentSelected = option['id'];
       // 提交每题选择的答案
@@ -41,22 +47,21 @@ export default {
         alert("请完成该题");
         return
       }
-      if (currentIndex >= this.itemDetail.length) {
+      if (currentIndex >= this.selectedPaPer.length) {
         // 题目答完
         this.$store.commit('finish')
         // 提交计算的总分到vuex
         this.$store.commit('saveTotalScore',this._calculate())
         return;
       }
-    
     },
     // 计算分数
     _calculate() {
-      let itemDetail = this.itemDetail,
+      let selectedPaPer = this.selectedPaPer,
         selectedItem = this.selectedItem,
         getTotalScore = 0;
       for (let key in selectedItem) {
-        itemDetail.forEach(item => {
+        selectedPaPer.forEach(item => {
           let answer_id = (selectedItem[key] - 1) % 4;
           if (
             item.topic_name === key &&
@@ -85,7 +90,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["itemDetail",'totalScore','currentIndex', "startStatus",'selectedItem'])
+    ...mapState(["testItem",'selectedPaPer','selectedPaPerKey','totalScore','currentIndex', "startStatus",'selectedItem'])
   }
 };
 </script>
@@ -110,6 +115,21 @@ export default {
   font-size: 14px;
   left: 90px;
   position: absolute;
+}
+.selectPaperAgin{
+  text-align: center;
+  font-size: 14px;
+  width: 100px;
+  max-height: 120px;
+  position: absolute;
+  border: solid gray 1px;
+  margin: 8px;
+  border-radius: 9px;
+  background-color: rgb(96, 74, 42);
+  color: rgb(230, 172, 14);
+}
+.restartPaper{
+  color: rgb(230, 172, 14);
 }
 .topicAnswerId::before {
   content: "A";
@@ -157,12 +177,12 @@ export default {
   width: 100%;
   height: 100%;
 }
-.requestionNum {
+.selectedPaPerKey {
   position: absolute;
   bottom: 23px;
   left: 50%;
   transform: translateX(-45%);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 900;
 }
 .main {

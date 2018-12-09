@@ -33,7 +33,7 @@ export default {
     return {};
   },
   computed: {
-    ...mapState(["finished", "totalScore", "selectedItem", "itemDetail"]),
+    ...mapState(["finished", "totalScore", "selectedItem", "selectedPaPer"]),
     scoreTexts() {
       return this.$store.state.scoreTexts;
     },
@@ -42,9 +42,9 @@ export default {
       return this._switchToABCD(selectedArr);
     },
     standardvalue() {
-      let itemDetail = this.itemDetail;
+      let selectedPaPer = this.selectedPaPer;
       let standardArr = [];
-      itemDetail.forEach(item => {
+      selectedPaPer.forEach(item => {
         item.topic_answer.forEach((item1, index) => {
           if (item1.is_standard_answer) {
             standardArr.push(index+1);
@@ -69,7 +69,6 @@ export default {
   },
   methods: {
     _switchToABCD(arr) {
-      console.log(arr);
       let newArr = arr.map(item => {
         if (item % 4 == 1) {
           return "A";
